@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament MLBB 2025 - Jadwal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* === KUSTOM BACKGROUND GAMBAR BARU === */
+            background-image: url('attack_on_titan_x_mlbb_event_poster__full_hd__by_quan171098_dgs062o-pre.jpg');
+            background-size: cover; /* Pastikan gambar menutupi seluruh viewport */
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed; /* Gambar tetap diam saat discroll */
+            position: relative; /* Penting untuk overlay */
+            color: white;
+        }
+
+        /* Overlay gelap untuk memastikan teks putih tetap kontras */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75); /* Lapisan hitam 75% transparan */
+            z-index: -1; /* Taruh di belakang konten */
+        }
+        /* ===================================== */
+
+        /* Custom scrollbar for better look in dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* bg-gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; /* bg-gray-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* bg-gray-500 */
+        }
+        /* Gaya untuk Modal (popup kustom) */
+        .modal-overlay {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.open {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content-container {
+            max-height: 80vh; /* Batasi tinggi modal */
+            overflow-y: auto; /* Aktifkan scroll jika konten terlalu panjang */
+        }
+        /* Style kustom untuk kotak pertandingan di Playoffs */
+        .match-box {
+            background-color: #1f2937; /* bg-gray-800 */
+            border: 1px solid #374151; /* border-gray-700 */
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .match-team {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            font-weight: 600;
+        }
+        .match-score {
+            font-weight: 700;
+            color: #f87171; /* text-red-400 */
+        }
+        /* Styling untuk logo tim placeholder */
+        .team-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #374151; /* bg-gray-700 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #9ca3af; /* text-gray-400 */
+            flex-shrink: 0;
+            margin-right: 12px;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen p-4 md:p-8 flex flex-col">
+
+    <div class="max-w-7xl mx-auto flex-grow w-full">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-red-500 tracking-wider">
+                TOURNAMENT MLBB
+            </h1>
+            <p class="text-xl md:text-2xl font-semibold text-gray-400 mt-1" id="current-phase-title">
+                2025 - Utama
+            </p>
+        </header>
+        
+        <!-- Tab Navigasi Utama -->
+        <div class="flex justify-center mb-8 space-x-2 md:space-x-4 flex-wrap">
+            <button id="tab-home" onclick="setActivePhase('Utama')" class="px-3 md:px-6 py-2 rounded-lg font-bold transition duration-200 border-2 border-red-600 bg-red-600 text-white shadow-lg hover:bg-red-700 text-sm md:text-base mb-2">
+                Utama
+            </button>
+            <button id="tab-teams" onclick="setActivePhase('Tim')" class="px-3 md:px-6 py-2 rounded-lg font-bold transition duration-200 border-2 border-gray-600 bg-gray-800 text-gray-300 shadow-lg hover:bg-gray-700 hover:text-white text-sm md:text-base mb-2">
+                Tim
+            </button>
+            <button id="tab-grup" onclick="setActivePhase('Fase Grup')" class="px-3 md:px-6 py-2 rounded-lg font-bold transition duration-200 border-2 border-gray-600 bg-gray-800 text-gray-300 shadow-lg hover:bg-gray-700 hover:text-white text-sm md:text-base mb-2">
+                Fase Grup
+            </button>
+            <button id="tab-playoffs" onclick="setActivePhase('Fase Playoffs')" class="px-3 md:px-6 py-2 rounded-lg font-bold transition duration-200 border-2 border-gray-600 bg-gray-800 text-gray-300 shadow-lg hover:bg-gray-700 hover:text-white text-sm md:text-base mb-2">
+                Fase Playoffs
+            </button>
+        </div>
+
+        <!-- Tournament Content Container -->
+        <div id="bracket-container">
+            <!-- Content will be generated here by JavaScript -->
+        </div>
+
+    </div>
+
+    <!-- Custom Modal Structure (Popup for Klasemen) -->
+    <div id="klasemen-modal" class="modal-overlay fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-lg modal-content-container transform transition-all duration-300 scale-95 modal-content">
+            <h3 id="modal-title" class="text-2xl font-bold text-red-400 mb-4 border-b pb-2 border-gray-700"></h3>
+            
+            <!-- Konten Klasemen akan dirender di sini -->
+            <div id="klasemen-content">
+                <!-- Tabel Klasemen akan dimasukkan di sini oleh JavaScript -->
+            </div>
+
+            <button onclick="closeModal()" class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition duration-200 shadow-lg">
+                Tutup
+            </button>
+        </div>
+    </div>
+    
+    <!-- FOOTER HAK CIPTA BARU -->
+    <footer class="mt-12 py-4 border-t border-gray-700 text-center bg-gray-900 bg-opacity-75">
+        <p class="text-sm text-gray-500 font-medium">
+            &copy; 2025 Jakastra Official. Semua Hak Cipta Dilindungi.
+        </p>
+    </footer>
+    <!-- AKHIR FOOTER HAK CIPTA -->
+
+    <script>
+        // Variabel untuk melacak fase yang aktif
+        let activePhase = 'Utama'; // Default ke halaman Utama
+
+        // Data Turnamen Berdasarkan Sketsa
+        const tournamentData = {
+            title: "Tournament MLBB 2025",
+            dates: "15 Desember - 18 Desember 2025",
+            venue: "Wonosobo, MUARA ENIM (VIA ONLINE)",
+            prizePool: "$600,000 IDR",
+            // Menggunakan 12 tim untuk 4 Grup (3 tim per grup) agar sesuai dengan Babak Eliminasi 8 tim (Quarterfinals)
+            teams: [
+                "EVOS Legends", "RRQ Hoshi", "Onic Esports", 
+                "Alter Ego", "Bigetron Alpha", "Geek Fam ID",
+                "Blacklist Int'l", "Bren Esports", "AP Bren", 
+                "Falcon Esports", "See You Soon", "Team Flash"
+            ],
+            groups: [
+                // Data Fase Grup (4 Grup, 3 tim per grup). Top 2 dari setiap grup lolos ke Quarterfinals (8 tim)
+                {
+                    name: "Grup A",
+                    matches: [
+                        { team1: "EVOS Legends", team2: "RRQ Hoshi", date: "22 Des", status: "Upcoming" },
+                        { team1: "Onic Esports", team2: "EVOS Legends", date: "22 Des", status: "Upcoming" },
+                        { team1: "RRQ Hoshi", team2: "Onic Esports", date: "23 Des", status: "Upcoming" }
+                    ],
+                    klasemen: [
+                        { team: "EVOS Legends", points: 0, wins: 0, losses: 0 },
+                        { team: "RRQ Hoshi", points: 0, wins: 0, losses: 0 },
+                        { team: "Onic Esports", points: 0, wins: 0, losses: 0 }
+                    ]
+                },
+                {
+                    name: "Grup B",
+                    matches: [
+                        { team1: "Alter Ego", team2: "Bigetron Alpha", date: "23 Des", status: "Upcoming" },
+                        { team1: "Geek Fam ID", team2: "Alter Ego", date: "24 Des", status: "Upcoming" },
+                        { team1: "Bigetron Alpha", team2: "Geek Fam ID", date: "24 Des", status: "Upcoming" }
+                    ],
+                    klasemen: [
+                        { team: "Alter Ego", points: 0, wins: 0, losses: 0 },
+                        { team: "Bigetron Alpha", points: 0, wins: 0, losses: 0 },
+                        { team: "Geek Fam ID", points: 0, wins: 0, losses: 0 }
+                    ]
+                },
+                {
+                    name: "Grup C",
+                    matches: [
+                        { team1: "Blacklist Int'l", team2: "Bren Esports", date: "25 Des", status: "Upcoming" },
+                        { team1: "AP Bren", team2: "Blacklist Int'l", date: "25 Des", status: "Upcoming" },
+                        { team1: "Bren Esports", team2: "AP Bren", date: "26 Des", status: "Upcoming" }
+                    ],
+                    klasemen: [
+                        { team: "Blacklist Int'l", points: 0, wins: 0, losses: 0 },
+                        { team: "Bren Esports", points: 0, wins: 0, losses: 0 },
+                        { team: "AP Bren", points: 0, wins: 0, losses: 0 }
+                    ]
+                },
+                {
+                    name: "Grup D",
+                    matches: [
+                        { team1: "Falcon Esports", team2: "See You Soon", date: "26 Des", status: "Upcoming" },
+                        { team1: "Team Flash", team2: "Falcon Esports", date: "27 Des", status: "Upcoming" },
+                        { team1: "See You Soon", team2: "Team Flash", date: "27 Des", status: "Upcoming" }
+                    ],
+                    klasemen: [
+                        { team: "Falcon Esports", points: 0, wins: 0, losses: 0 },
+                        { team: "See You Soon", points: 0, wins: 0, losses: 0 },
+                        { team: "Team Flash", points: 0, wins: 0, losses: 0 }
+                    ]
+                }
+            ],
+            // Data untuk Fase Playoffs (Single Elimination Bracket - 8 Tim)
+            // SEMUA DATA SKOR DIKOSONGKAN UNTUK MULAI DARI AWAL
+            playoffMatches: [
+                {
+                    round: "Quarterfinals (8 Besar)",
+                    matches: [
+                        // QF 1: Juara Grup A vs Runner Up Grup C
+                        { id: 1, team1: "Grup A #1", team2: "Grup C #2", score1: 0, score2: 0, winner: "", date: "28 Des", status: "Upcoming", bo: 5 },
+                        // QF 2: Juara Grup B vs Runner Up Grup D
+                        { id: 2, team1: "Grup B #1", team2: "Grup D #2", score1: 0, score2: 0, winner: "", date: "28 Des", status: "Upcoming", bo: 5 },
+                        // QF 3: Juara Grup C vs Runner Up Grup A
+                        { id: 3, team1: "Grup C #1", team2: "Grup A #2", score1: 0, score2: 0, winner: "", date: "29 Des", status: "Upcoming", bo: 5 },
+                        // QF 4: Juara Grup D vs Runner Up Grup B
+                        { id: 4, team1: "Grup D #1", team2: "Grup B #2", score1: 0, score2: 0, winner: "", date: "29 Des", status: "Upcoming", bo: 5 },
+                    ]
+                },
+                {
+                    round: "Semifinals (4 Besar)",
+                    matches: [
+                        { id: 5, team1: "Pemenang QF 1", team2: "Pemenang QF 2", score1: 0, score2: 0, winner: "", date: "30 Des", status: "Upcoming", bo: 5 },
+                        { id: 6, team1: "Pemenang QF 3", team2: "Pemenang QF 4", score1: 0, score2: 0, winner: "", date: "30 Des", status: "Upcoming", bo: 5 }
+                    ]
+                },
+                {
+                    round: "Final (Juara)",
+                    matches: [
+                        { id: 7, team1: "Pemenang SF 1", team2: "Pemenang SF 2", score1: 0, score2: 0, winner: "", date: "31 Des", status: "Upcoming", bo: 7 }
+                    ]
+                }
+            ]
+        };
+
+        // --- FUNGSI HALAMAN UTAMA (HOME) BARU ---
+        
+        function renderHome() {
+            const container = document.getElementById('bracket-container');
+            container.innerHTML = `
+                <div class="bg-gray-800 p-8 md:p-12 rounded-xl shadow-2xl border-t-4 border-red-600 max-w-3xl mx-auto bg-opacity-90">
+                    <h2 class="text-3xl font-extrabold text-red-400 mb-6 border-b pb-3 border-gray-700 text-center">
+                        Selamat Datang di ${tournamentData.title}
+                    </h2>
+                    
+                    <div class="space-y-6 text-lg">
+                        <div class="flex items-center p-4 bg-gray-700 rounded-lg shadow-inner bg-opacity-90">
+                            <span class="text-3xl mr-4 text-green-400">💰</span>
+                            <div>
+                                <p class="font-semibold text-gray-400">Total Hadiah (Prize Pool)</p>
+                                <p class="text-2xl font-bold text-yellow-400">${tournamentData.prizePool}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-4 bg-gray-700 rounded-lg shadow-inner bg-opacity-90">
+                            <span class="text-3xl mr-4 text-blue-400">📅</span>
+                            <div>
+                                <p class="font-semibold text-gray-400">Tanggal Turnamen</p>
+                                <p class="text-xl font-bold text-white">${tournamentData.dates}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 bg-gray-700 rounded-lg shadow-inner bg-opacity-90">
+                            <span class="text-3xl mr-4 text-purple-400">📍</span>
+                            <div>
+                                <p class="font-semibold text-gray-400">Lokasi Utama</p>
+                                <p class="text-xl font-bold text-white">${tournamentData.venue}</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-gray-700 rounded-lg shadow-inner bg-opacity-90">
+                            <p class="font-semibold text-gray-400 mb-2">Format Turnamen</p>
+                            <ul class="list-disc list-inside text-gray-300 ml-4 space-y-1">
+                                <li>Start: 12 Tim dibagi menjadi 4 grup (A, B, C, D).</li>
+                                <li>Fase Grup: Semua tim bermain Round Robin (BO2).</li>
+                                <li>Lolos: 8 Tim (Juara dan Runner-up setiap grup) melangkah ke Playoffs.</li>
+                                <li>Playoffs: Dimulai dari Quarter Final (BO3), Semi Final (BO5), hingga Grand Final (BO7).</li>
+                                <li>Finish: Pemenang Grand Final menjadi Juara Turnamen.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p class="text-center text-gray-400 mt-8 italic">
+                        12 Tim terbaik dari seluruh dunia bersaing untuk memperebutkan gelar juara Mobile Legends.
+                    </p>
+                </div>
+            `;
+        }
+
+        // --- FUNGSI HALAMAN TIM (TEAMS) BARU ---
+        
+        function renderTeams() {
+            const container = document.getElementById('bracket-container');
+            
+            // Menggabungkan semua tim ke dalam satu daftar
+            let teamsHtml = tournamentData.teams.map(teamName => {
+                // Mendapatkan inisial tim untuk logo placeholder
+                const initials = teamName.split(' ').map(n => n[0]).join('');
+
+                // Menentukan grup tim
+                let groupName = 'N/A';
+                for (const group of tournamentData.groups) {
+                    if (group.klasemen.some(t => t.team === teamName)) {
+                        groupName = group.name;
+                        break;
+                    }
+                }
+                
+                return `
+                    <div class="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700 hover:border-red-500 transition duration-200 bg-opacity-90">
+                        <!-- Logo Placeholder -->
+                        <div class="team-logo">${initials}</div>
+                        
+                        <div class="flex-grow">
+                            <p class="text-xl font-bold text-white">${teamName}</p>
+                            <p class="text-sm text-gray-400">Grup: <span class="font-semibold text-red-300">${groupName}</span></p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="bg-gray-800 p-6 rounded-xl shadow-2xl border-t-4 border-red-600 bg-opacity-90">
+                    <h2 class="text-3xl font-bold text-red-400 mb-6 border-b pb-3 border-gray-700">Daftar Tim Peserta (${tournamentData.teams.length} Tim)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${teamsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // --- FUNGSI KLASMEN & MODAL ---
+        
+        // Cek apakah data klasemen untuk satu grup masih kosong (semua 0)
+        function isKlasemenEmpty(klasemenData) {
+            // Jika ada SATU SAJA tim yang memiliki poin, kemenangan, ATAU kekalahan > 0, maka klasemen TIDAK kosong
+            return klasemenData.every(team => 
+                team.points === 0 && team.wins === 0 && team.losses === 0
+            );
+        }
+
+        // FUNGSI BARU: Cek apakah Fase Grup benar-benar sudah selesai (semua grup sudah terisi minimal 1 data)
+        function isGroupPhaseComplete() {
+            // Jika ada SATU SAJA grup yang klasemennya masih kosong, maka Fase Grup belum selesai
+            return tournamentData.groups.every(group => !isKlasemenEmpty(group.klasemen));
+        }
+
+        function sortKlasemen(data) {
+            return data.sort((a, b) => {
+                if (b.points !== a.points) {
+                    return b.points - a.points;
+                }
+                return b.wins - a.wins;
+            });
+        }
+
+        function renderKlasemen(klasemenData) {
+            const sortedData = sortKlasemen(klasemenData);
+            
+            let tableHtml = `
+                <div class="overflow-x-auto rounded-lg border border-gray-700 shadow-lg">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="bg-gray-700">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-1/12">#</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-6/12">Tim</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Poin</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">W</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">L</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-gray-800 divide-y divide-gray-700">
+            `;
+
+            sortedData.forEach((item, index) => {
+                const rank = index + 1;
+                // Top 2 tim lolos ke babak Eliminasi (Quarterfinals)
+                const isQualified = rank <= 2; 
+                const rowClasses = isQualified ? 'bg-green-900/40 hover:bg-green-900/60' : 'hover:bg-gray-700';
+
+                tableHtml += `
+                    <tr class="${rowClasses} transition duration-150">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold ${isQualified ? 'text-green-300' : 'text-gray-400'}">${rank}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-white">
+                            ${isQualified ? '<span class="text-green-400 mr-2">★</span>' : ''}${item.team}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center font-bold text-red-400">${item.points}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-green-400">${item.wins}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-red-400">${item.losses}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            return tableHtml;
+        }
+
+        // FUNGSI BARU: Menampilkan modal pembatasan akses
+        function showRestrictionModal(title, message) {
+            const modal = document.getElementById('klasemen-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const content = document.getElementById('klasemen-content');
+            
+            modalTitle.textContent = title;
+            content.innerHTML = `
+                <div class="text-center py-8">
+                    <span class="text-6xl text-yellow-400 mb-4 inline-block">⚠️</span>
+                    <p class="text-xl font-semibold text-white mb-4">${message}</p>
+                    <p class="text-gray-400">
+                        Mohon tunggu hingga seluruh pertandingan Fase Grup selesai dan tim yang lolos ke Playoffs telah dikonfirmasi.
+                    </p>
+                </div>
+            `;
+
+            modal.classList.add('open');
+        }
+
+        function showModal(groupName) {
+            const group = tournamentData.groups.find(g => g.name === groupName);
+            
+            if (!group) return;
+
+            const modal = document.getElementById('klasemen-modal');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('klasemen-content');
+            
+            title.textContent = `Klasemen ${groupName}`;
+            
+            if (isKlasemenEmpty(group.klasemen)) {
+                content.innerHTML = `
+                    <p class="text-gray-300 mb-6 py-4 text-center border-y border-gray-700">
+                        Detail klasemen untuk grup ini akan segera tersedia setelah pertandingan pertama dimulai. Tetap ikuti terus pembaruan terbaru!
+                    </p>
+                `;
+            } else {
+                content.innerHTML = renderKlasemen(group.klasemen);
+            }
+
+            modal.classList.add('open');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('klasemen-modal');
+            modal.classList.remove('open');
+            // Bersihkan konten modal setelah ditutup (opsional, tapi baik)
+            document.getElementById('klasemen-content').innerHTML = '';
+        }
+
+        document.getElementById('klasemen-modal').addEventListener('click', function(event) {
+            if (event.target.id === 'klasemen-modal') {
+                closeModal();
+            }
+        });
+
+
+        // --- FUNGSI FASE GRUP ---
+
+        function createMatchHtml(match) {
+            let statusClasses = '';
+            if (match.status === 'Upcoming') {
+                statusClasses = 'bg-yellow-800 text-yellow-300';
+            } else if (match.status === 'Completed') {
+                statusClasses = 'bg-green-800 text-green-300';
+            } else if (match.status === 'Live') {
+                statusClasses = 'bg-red-800 text-red-300 animate-pulse';
+            }
+
+            return `
+                <div class="flex items-center justify-between p-2 rounded-lg border border-gray-700 hover:bg-gray-700 transition duration-200 shadow-md mb-2 bg-opacity-90">
+                    <div class="flex flex-col flex-grow space-y-0.5">
+                        <!-- Tim 1 -->
+                        <div class="flex items-center font-bold text-sm">
+                            <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-2"></span>
+                            <span class="truncate">${match.team1}</span>
+                        </div>
+                        <!-- Tim 2 -->
+                        <div class="flex items-center font-bold text-sm">
+                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>
+                            <span class="truncate">${match.team2}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Detail Waktu/Status -->
+                    <div class="text-right ml-4 flex flex-col justify-center items-end flex-shrink-0">
+                        <p class="text-xs font-semibold text-gray-400">${match.date}</p>
+                        <span class="text-[10px] font-bold uppercase mt-1 px-1.5 py-0.5 rounded ${statusClasses}">
+                            ${match.status}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createGroupHtml(group) {
+            const matchesHtml = group.matches.map(createMatchHtml).join('');
+
+            return `
+                <div class="bg-gray-800 p-6 rounded-xl shadow-2xl border-t-4 border-red-600 bg-opacity-90">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 border-gray-700 text-red-400">
+                        ${group.name}
+                    </h2>
+                    <div class="space-y-4">
+                        ${matchesHtml}
+                    </div>
+                    <button onclick="showModal('${group.name}')" class="mt-4 w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition duration-200 transform hover:scale-[1.01] shadow-lg">
+                        Lihat Klasemen
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Fungsi untuk merender Fase Grup
+        function renderGroupPhase() {
+            const container = document.getElementById('bracket-container');
+            // Menggunakan gap-6 untuk tampilan yang lebih padat di mode landscape
+            const groupsHtml = tournamentData.groups.map(createGroupHtml).join('');
+            container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">${groupsHtml}</div>`;
+        }
+
+
+        // --- FUNGSI FASE PLAYOFFS BARU (SINGLE ELIMINATION) ---
+
+        // Helper untuk merender satu kotak pertandingan di Playoffs
+        function createPlayoffMatchHtml(match) {
+            const isCompleted = match.status === 'Completed';
+            const winnerClass1 = isCompleted && match.winner === match.team1 ? 'text-green-400 font-extrabold' : 'text-white';
+            const winnerClass2 = isCompleted && match.winner === match.team2 ? 'text-green-400 font-extrabold' : 'text-white';
+            
+            // Tentukan status badge
+            let statusBadge = '';
+            let statusText = match.status;
+            let statusBg = 'bg-gray-700 text-gray-400';
+
+            if (match.status === 'Completed') {
+                statusBg = 'bg-green-700 text-white';
+                statusText = 'Selesai';
+            } else if (match.status === 'Upcoming') {
+                statusBg = 'bg-yellow-700 text-white';
+                statusText = 'Mendatang';
+            }
+
+            statusBadge = `<span class="text-xs font-medium uppercase px-2 py-0.5 rounded ${statusBg}">${statusText} - BO${match.bo}</span>`;
+
+
+            return `
+                <div class="match-box bg-opacity-90">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm font-medium text-gray-400">${match.date}</span>
+                        ${statusBadge}
+                    </div>
+                    <div class="space-y-1">
+                        <!-- Tim 1 -->
+                        <div class="match-team ${winnerClass1}">
+                            <span class="truncate">${match.team1}</span>
+                            <span class="match-score">${match.score1}</span>
+                        </div>
+                        <div class="border-t border-gray-700 pt-1"></div>
+                        <!-- Tim 2 -->
+                        <div class="match-team ${winnerClass2}">
+                            <span class="truncate">${match.team2}</span>
+                            <span class="match-score">${match.score2}</span>
+                        </div>
+                    </div>
+                    ${isCompleted ? `<p class="mt-2 text-xs text-right text-green-400 font-bold">Pemenang: ${match.winner}</p>` : ''}
+                </div>
+            `;
+        }
+
+        // Fungsi untuk merender Fase Playoffs (Single Elimination Bracket)
+        function renderPlayoffs() {
+            const container = document.getElementById('bracket-container');
+            
+            // Cek status fase grup. Jika belum selesai (minimal ada data yang masuk di setiap grup), tampilkan pesan
+            if (!isGroupPhaseComplete()) {
+                 container.innerHTML = `
+                    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border-t-4 border-yellow-600 max-w-lg mx-auto bg-opacity-90 text-center">
+                        <span class="text-6xl text-yellow-400 mb-4 inline-block">🔒</span>
+                        <h3 class="text-2xl font-bold text-yellow-400 mb-2">Akses Terkunci</h3>
+                        <p class="text-white mb-4">
+                            Fase Playoffs akan dibuka setelah seluruh pertandingan Fase Grup selesai dan 8 tim yang lolos telah dikonfirmasi.
+                        </p>
+                        <p class="text-sm text-gray-400">
+                            Silakan cek tab "Fase Grup" untuk detail pertandingan yang akan datang.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+
+            // Mengubah ke grid 3 kolom untuk tampilan progresif (QF -> SF -> Final)
+            let playoffsHtml = `<div class="lg:grid lg:grid-cols-3 lg:gap-6 overflow-x-auto p-4 w-full">`;
+            
+            // Filter match data
+            const quarterfinals = tournamentData.playoffMatches.find(r => r.round.includes("Quarterfinals"));
+            const semifinals = tournamentData.playoffMatches.find(r => r.round.includes("Semifinals"));
+            const final = tournamentData.playoffMatches.find(r => r.round.includes("Final"));
+
+            // KOLOM 1: Quarterfinals (8 Besar)
+            playoffsHtml += `
+                <div class="min-w-[300px] mb-8 lg:mb-0 lg:pr-6 lg:border-r-2 border-gray-700">
+                    <h3 class="text-2xl font-bold mb-4 text-red-400 border-b border-gray-700 pb-2">Babak Eliminasi Utama</h3>
+                    
+                    <p class="text-lg font-semibold text-gray-300 mb-4">${quarterfinals.round}</p>
+                    ${quarterfinals.matches.map(createPlayoffMatchHtml).join('')}
+                </div>
+            `;
+            
+            // KOLOM 2: Semifinals (4 Besar)
+            playoffsHtml += `
+                <div class="min-w-[300px] mb-8 lg:mb-0 lg:px-6 lg:border-r-2 border-gray-700">
+                    <h3 class="text-2xl font-bold mb-4 text-red-400 border-b border-gray-700 pb-2">Jalur Menuju Final</h3>
+                    
+                    <p class="text-lg font-semibold text-gray-300 mb-4">${semifinals.round}</p>
+                    ${semifinals.matches.map(createPlayoffMatchHtml).join('')}
+                </div>
+            `;
+
+            // KOLOM 3: Grand Final
+            playoffsHtml += `
+                <div class="min-w-[300px] lg:pl-6">
+                    <h3 class="text-2xl font-bold mb-4 text-red-400 border-b border-gray-700 pb-2">Laga Puncak</h3>
+                    <p class="text-lg font-semibold text-gray-300 mb-4">${final.round}</p>
+                    ${final.matches.map(createPlayoffMatchHtml).join('')}
+                </div>
+            `;
+            
+            playoffsHtml += `</div>`;
+            container.innerHTML = playoffsHtml;
+        }
+
+
+        // --- FUNGSI NAVIGASI UTAMA ---
+
+        // Fungsi untuk mengatur fase yang aktif dan merender konten yang sesuai
+        function setActivePhase(phase) {
+            activePhase = phase;
+            const tabs = {
+                'Utama': document.getElementById('tab-home'),
+                'Tim': document.getElementById('tab-teams'),
+                'Fase Grup': document.getElementById('tab-grup'),
+                'Fase Playoffs': document.getElementById('tab-playoffs')
+            };
+            const titleElement = document.getElementById('current-phase-title');
+
+            // 1. Update tampilan tombol navigasi
+            Object.keys(tabs).forEach(key => {
+                const button = tabs[key];
+                if (key === phase) {
+                    // Tombol aktif
+                    button.classList.remove('bg-gray-800', 'border-gray-600', 'text-gray-300', 'hover:bg-gray-700', 'hover:text-white');
+                    button.classList.add('bg-red-600', 'border-red-600', 'text-white', 'hover:bg-red-700');
+                } else {
+                    // Tombol non-aktif
+                    button.classList.remove('bg-red-600', 'border-red-600', 'text-white', 'hover:bg-red-700');
+                    button.classList.add('bg-gray-800', 'border-gray-600', 'text-gray-300', 'hover:bg-gray-700', 'hover:text-white');
+                }
+            });
+
+            // 2. Update judul fase
+            titleElement.textContent = `2025 - ${phase}`;
+
+            // 3. Render konten yang sesuai
+            switch (phase) {
+                case 'Utama':
+                    renderHome();
+                    break;
+                case 'Tim':
+                    renderTeams();
+                    break;
+                case 'Fase Grup':
+                    renderGroupPhase();
+                    break;
+                case 'Fase Playoffs':
+                    renderPlayoffs();
+                    break;
+            }
+        }
+
+        // Jalankan fungsi inisialisasi pada saat dokumen dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Render halaman default (Utama)
+            setActivePhase('Utama'); 
+        });
+
+    </script>
+</body>
+</html>
