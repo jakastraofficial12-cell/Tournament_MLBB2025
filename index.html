@@ -96,6 +96,19 @@
             flex-shrink: 0;
             margin-right: 12px;
         }
+        
+        /* === Gaya Kustom untuk Super Match === */
+        .super-match-card {
+            /* Warna latar belakang dramatis */
+            background: linear-gradient(135deg, #1f2937, #374151); /* Dark gradient */
+            border: 3px solid #fcd34d; /* Border kuning emas */
+            box-shadow: 0 10px 15px -3px rgba(252, 211, 77, 0.5), 0 4px 6px -4px rgba(252, 211, 77, 0.5); /* Glowing shadow */
+        }
+        .team-box-champion {
+            background-color: rgba(255, 255, 255, 0.05); /* Latar belakang tim transparan */
+            border: 1px solid rgba(252, 211, 77, 0.5); /* Border emas tipis */
+        }
+        /* ===================================== */
     </style>
 </head>
 <body class="text-white min-h-screen p-4 md:p-8 flex flex-col">
@@ -125,6 +138,10 @@
             <button id="tab-playoffs" onclick="setActivePhase('Fase Playoffs')" class="px-3 md:px-6 py-2 rounded-lg font-bold transition duration-200 border-2 border-gray-600 bg-gray-800 text-gray-300 shadow-lg hover:bg-gray-700 hover:text-white text-sm md:text-base mb-2">
                 Fase Playoffs
             </button>
+            <!-- TAB BARU: Super Match -->
+            <button id="tab-super-match" onclick="setActivePhase('Super Match')" class="px-3 md:px-6 py-2 rounded-lg font-bold transition duration-200 border-2 border-gray-600 bg-gray-800 text-gray-300 shadow-lg hover:bg-gray-700 hover:text-white text-sm md:text-base mb-2">
+                Super Match
+            </button>
         </div>
 
         <!-- Tournament Content Container -->
@@ -150,7 +167,7 @@
         </div>
     </div>
     
-    <!-- FOOTER HAK CIPTA BARU -->
+    <!-- FOOTER HAK CIPTA -->
     <footer class="mt-12 py-4 border-t border-gray-700 text-center bg-gray-900 bg-opacity-75">
         <p class="text-sm text-gray-500 font-medium">
             &copy; 2025 Jakastra Official. Semua Hak Cipta Dilindungi.
@@ -168,6 +185,25 @@
             dates: "15 Desember - 18 Desember 2025",
             venue: "Wonosobo, MUARA ENIM (VIA ONLINE)",
             prizePool: "$600,000 IDR",
+            // Data Juara Musim Lalu
+            lastSeasonChampion: "EVOS Legends", // Juara musim lalu
+            
+            // Data Pertandingan Spesial
+            specialMatch: {
+                round: "Champion vs Champion",
+                match: {
+                    id: 8,
+                    team1: "Juara Musim Ini", // Placeholder, akan diisi secara dinamis
+                    team2: "EVOS Legends", // Juara Musim Lalu
+                    score1: 0,
+                    score2: 0,
+                    winner: "",
+                    date: "1 Januari 2026",
+                    status: "Upcoming",
+                    bo: 7
+                }
+            },
+            
             // Menggunakan 12 tim untuk 4 Grup (3 tim per grup) agar sesuai dengan Babak Eliminasi 8 tim (Quarterfinals)
             teams: [
                 "EVOS Legends", "RRQ Hoshi", "Onic Esports", 
@@ -231,7 +267,6 @@
                 }
             ],
             // Data untuk Fase Playoffs (Single Elimination Bracket - 8 Tim)
-            // SEMUA DATA SKOR DIKOSONGKAN UNTUK MULAI DARI AWAL
             playoffMatches: [
                 {
                     round: "Quarterfinals (8 Besar)",
@@ -255,14 +290,16 @@
                 },
                 {
                     round: "Final (Juara)",
+                    // MENGATUR STATUS 'Completed' DAN 'winner' UNTUK MENGUJI TAMPILAN 'Super Match'
+                    // Final diatur seolah-olah sudah selesai dengan Juara Musim Ini adalah Pemenang SF 1
                     matches: [
-                        { id: 7, team1: "Pemenang SF 1", team2: "Pemenang SF 2", score1: 0, score2: 0, winner: "", date: "31 Des", status: "Upcoming", bo: 7 }
+                        { id: 7, team1: "Pemenang SF 1", team2: "Pemenang SF 2", score1: 4, score2: 3, winner: "Pemenang SF 1", date: "31 Des", status: "Completed", bo: 7 } 
                     ]
                 }
             ]
         };
 
-        // --- FUNGSI HALAMAN UTAMA (HOME) BARU ---
+        // --- FUNGSI HALAMAN UTAMA (HOME) ---
         
         function renderHome() {
             const container = document.getElementById('bracket-container');
@@ -307,6 +344,13 @@
                                 <li>Finish: Pemenang Grand Final menjadi Juara Turnamen.</li>
                             </ul>
                         </div>
+                        
+                        <div class="p-4 bg-gray-700 rounded-lg shadow-inner bg-opacity-90">
+                            <p class="font-semibold text-gray-400 mb-2">Laga Super</p>
+                            <p class="text-gray-300">
+                                Juara Turnamen Musim Ini akan bertanding melawan Juara Musim Lalu (${tournamentData.lastSeasonChampion}) dalam Best of ${tournamentData.specialMatch.match.bo}.
+                            </p>
+                        </div>
                     </div>
 
                     <p class="text-center text-gray-400 mt-8 italic">
@@ -316,7 +360,7 @@
             `;
         }
 
-        // --- FUNGSI HALAMAN TIM (TEAMS) BARU ---
+        // --- FUNGSI HALAMAN TIM (TEAMS) ---
         
         function renderTeams() {
             const container = document.getElementById('bracket-container');
@@ -369,7 +413,7 @@
             );
         }
 
-        // FUNGSI BARU: Cek apakah Fase Grup benar-benar sudah selesai (semua grup sudah terisi minimal 1 data)
+        // FUNGSI BARU: Cek apakah Fase Grup benar-benar sudah selesai (minimal ada data yang masuk)
         function isGroupPhaseComplete() {
             // Jika ada SATU SAJA grup yang klasemennya masih kosong, maka Fase Grup belum selesai
             return tournamentData.groups.every(group => !isKlasemenEmpty(group.klasemen));
@@ -427,26 +471,6 @@
                 </div>
             `;
             return tableHtml;
-        }
-
-        // FUNGSI BARU: Menampilkan modal pembatasan akses
-        function showRestrictionModal(title, message) {
-            const modal = document.getElementById('klasemen-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const content = document.getElementById('klasemen-content');
-            
-            modalTitle.textContent = title;
-            content.innerHTML = `
-                <div class="text-center py-8">
-                    <span class="text-6xl text-yellow-400 mb-4 inline-block">⚠️</span>
-                    <p class="text-xl font-semibold text-white mb-4">${message}</p>
-                    <p class="text-gray-400">
-                        Mohon tunggu hingga seluruh pertandingan Fase Grup selesai dan tim yang lolos ke Playoffs telah dikonfirmasi.
-                    </p>
-                </div>
-            `;
-
-            modal.classList.add('open');
         }
 
         function showModal(groupName) {
@@ -663,6 +687,111 @@
             container.innerHTML = playoffsHtml;
         }
 
+        // --- FUNGSI HALAMAN SUPER MATCH YANG DIRAPIKAN ---
+        
+        function renderSuperMatch() {
+            const container = document.getElementById('bracket-container');
+            const specialMatchData = tournamentData.specialMatch.match;
+            const finalMatch = tournamentData.playoffMatches.find(r => r.round.includes("Final")).matches[0];
+
+            // Dapatkan pemenang musim ini (jika sudah ada)
+            let currentSeasonWinner = finalMatch.winner;
+            
+            // Jika final belum selesai, gunakan placeholder TBD
+            if (finalMatch.status !== 'Completed' || !currentSeasonWinner) {
+                currentSeasonWinner = "TBD";
+            }
+
+            // Perbarui detail pertandingan spesial
+            specialMatchData.team1 = currentSeasonWinner;
+
+            // Tentukan kelas CSS untuk Juara Musim Ini
+            const currentWinnerClass = currentSeasonWinner === "TBD" 
+                ? 'text-gray-400 font-medium' 
+                : 'text-yellow-400 font-extrabold text-2xl md:text-3xl';
+            
+            // Tentukan status badge untuk Super Match
+            let statusText = specialMatchData.status === 'Upcoming' ? 'Segera Hadir' : 'Selesai';
+            let statusBg = specialMatchData.status === 'Upcoming' ? 'bg-red-700/80' : 'bg-green-700/80';
+            
+            // Tentukan skor
+            const scoreText = specialMatchData.status === 'Completed' 
+                ? `${specialMatchData.score1} : ${specialMatchData.score2}` 
+                : `BO${specialMatchData.bo}`;
+            
+            const winnerName = specialMatchData.winner ? specialMatchData.winner : 'BELUM ADA';
+
+            container.innerHTML = `
+                <div class="max-w-3xl mx-auto">
+                    <!-- Kartu Super Match dengan desain dramatis -->
+                    <div class="super-match-card p-6 md:p-10 rounded-xl shadow-2xl bg-opacity-95 text-center">
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-red-400 mb-1">
+                            LAGA SUPREMASI
+                        </h2>
+                        <p class="text-xl text-yellow-300 mb-6 font-bold uppercase tracking-wider">
+                            Juara Musim Ini vs Juara Musim Lalu
+                        </p>
+                        
+                        <!-- Header Status dan Tanggal (Sudah di-align rata kiri dan rata kanan) -->
+                        <div class="flex justify-between items-center text-sm mb-8">
+                            <!-- Rata Kiri: Badge Status -->
+                            <span class="px-3 py-1 rounded-full text-white font-bold ${statusBg} flex-shrink-0">
+                                LAGA SUPREMASI
+                            </span>
+                            <!-- Rata Kanan: Tanggal -->
+                            <span class="text-lg font-semibold text-gray-300 ml-4 flex-grow text-right">
+                                📅 ${specialMatchData.date}
+                            </span>
+                        </div>
+
+                        <!-- Panel Pertandingan VS -->
+                        <div class="grid grid-cols-3 gap-4 items-center relative">
+                            <!-- Team 1 (Juara Musim Ini) -->
+                            <div class="team-box-champion p-4 rounded-lg shadow-inner flex flex-col items-center justify-center h-full">
+                                <p class="text-sm font-semibold text-gray-400 mb-2">Juara Musim Ini</p>
+                                <p class="${currentWinnerClass} uppercase text-shadow">
+                                    ${currentSeasonWinner}
+                                </p>
+                            </div>
+
+                            <!-- VS Emblem -->
+                            <div class="flex flex-col items-center justify-center h-full">
+                                <span class="text-5xl font-extrabold text-yellow-400 tracking-widest leading-none">VS</span>
+                                <span class="text-sm text-gray-400 mt-1">Best of ${specialMatchData.bo}</span>
+                            </div>
+
+                            <!-- Team 2 (Juara Musim Lalu) -->
+                            <div class="team-box-champion p-4 rounded-lg shadow-inner flex flex-col items-center justify-center h-full">
+                                <p class="text-sm font-semibold text-gray-400 mb-2">Juara Musim Lalu</p>
+                                <p class="text-yellow-400 font-extrabold text-2xl md:text-3xl uppercase text-shadow">
+                                    ${tournamentData.lastSeasonChampion}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Skor / Hasil -->
+                        <div class="mt-8 pt-4 border-t border-gray-700">
+                            <h3 class="text-xl font-bold text-red-400 mb-3">
+                                ${specialMatchData.status === 'Completed' ? 'HASIL AKHIR' : 'FORMAT PERTANDINGAN'}
+                            </h3>
+                            <div class="bg-gray-700/50 p-3 rounded-lg">
+                                <p class="text-4xl font-extrabold text-yellow-300 tracking-wider">
+                                    ${scoreText}
+                                </p>
+                            </div>
+                            
+                            ${specialMatchData.status === 'Completed' ? `
+                                <p class="mt-4 text-lg font-bold text-green-400">Pemenang Supremasi: ${winnerName}</p>
+                            ` : `
+                                <p class="mt-4 text-md text-gray-300">Juara Musim Ini akan bertanding dengan ${tournamentData.lastSeasonChampion}.</p>
+                            `}
+                        </div>
+                        
+                    </div>
+                </div>
+            `;
+        }
+
 
         // --- FUNGSI NAVIGASI UTAMA ---
 
@@ -673,7 +802,8 @@
                 'Utama': document.getElementById('tab-home'),
                 'Tim': document.getElementById('tab-teams'),
                 'Fase Grup': document.getElementById('tab-grup'),
-                'Fase Playoffs': document.getElementById('tab-playoffs')
+                'Fase Playoffs': document.getElementById('tab-playoffs'),
+                'Super Match': document.getElementById('tab-super-match') // Tambahkan tab baru
             };
             const titleElement = document.getElementById('current-phase-title');
 
@@ -707,6 +837,9 @@
                     break;
                 case 'Fase Playoffs':
                     renderPlayoffs();
+                    break;
+                case 'Super Match': // Case baru untuk tab Super Match
+                    renderSuperMatch();
                     break;
             }
         }
