@@ -194,7 +194,7 @@
                 match: {
                     id: 8,
                     team1: "Juara Musim Ini", // Placeholder, akan diisi secara dinamis
-                    team2: "?", // Juara Musim Lalu
+                    team2: "AL-FAIZ GT", // Menggunakan Juara Musim Lalu
                     score1: 0,
                     score2: 0,
                     winner: "",
@@ -206,45 +206,45 @@
             
             // Menggunakan 12 tim untuk 4 Grup (3 tim per grup) agar sesuai dengan Babak Eliminasi 8 tim (Quarterfinals)
             teams: [
-                "Grup 1", "Grup 5", "Grup 9", 
-                "Grup 2", "Grup 6", "Grup 10",
-                "Grup 3", "Grup 7", "Grup 11",
-                "Grup 4", "Grup 8", "Grup 12",
+                "Grup 1", "Grup 2", "Grup 3", 
+                "Grup 4", "Grup 5", "Grup 6",
+                "Grup 7", "Grup 8", "Grup 9",
+                "Grup 10", "Grup 11", "Grup 12",
             ],
             groups: [
                 // Data Fase Grup (4 Grup, 3 tim per grup). Top 2 dari setiap grup lolos ke Quarterfinals (8 tim)
                 {
                     name: "Grup A",
                     matches: [
-                        { team1: "grup 1", team2: "grup 2", date: "22 Des", status: "Upcoming" },
-                        { team1: "grup 2", team2: "grup 3", date: "22 Des", status: "Upcoming" },
-                        { team1: "grup 3", team2: "grup 1", date: "23 Des", status: "Upcoming" }
+                        { team1: "Grup 1", team2: "Grup 2", date: "22 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 2", team2: "Grup 3", date: "22 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 3", team2: "Grup 1", date: "23 Des", status: "Upcoming" } // Diperbaiki ke G besar
                     ],
                     klasemen: [
-                        { team: "grup 1", points: 2, wins: 2, losses: 0 },
-                        { team: "grup 2", points: 1, wins: 1, losses: 2 },
-                        { team: "grup 3", points: 0, wins: 0, losses: 4 }
+                        { team: "Grup 1", points: 2, wins: 2, losses: 0 }, // Diperbaiki ke G besar
+                        { team: "Grup 2", points: 1, wins: 1, losses: 2 }, // Diperbaiki ke G besar
+                        { team: "Grup 3", points: 0, wins: 0, losses: 4 } // Diperbaiki ke G besar
                     ]
                 },
                 {
                     name: "Grup B",
                     matches: [
-                        { team1: "grup 4", team2: "grup 6", date: "23 Des", status: "Upcoming" },
-                        { team1: "grup 5", team2: "grup 5", date: "24 Des", status: "Upcoming" },
-                        { team1: "grup 6", team2: "grup 4", date: "24 Des", status: "Upcoming" }
+                        { team1: "Grup 4", team2: "Grup 6", date: "23 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 5", team2: "Grup 5", date: "24 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 6", team2: "Grup 4", date: "24 Des", status: "Upcoming" } // Diperbaiki ke G besar
                     ],
                     klasemen: [
-                        { team: "grup 4", points: 0, wins: 0, losses: 4 },
-                        { team: "grup 5", points: 1, wins: 1, losses: 0 },
-                        { team: "grup 6", points: 2, wins: 2, losses: 0 }
+                        { team: "Grup 4", points: 0, wins: 0, losses: 4 }, // Diperbaiki ke G besar
+                        { team: "Grup 5", points: 1, wins: 1, losses: 0 }, // Diperbaiki ke G besar
+                        { team: "Grup 6", points: 2, wins: 2, losses: 0 } // Diperbaiki ke G besar
                     ]
                 },
                 {
                     name: "Grup C",
                     matches: [
-                        { team1: "grup 7", team2: "grup 9", date: "25 Des", status: "Upcoming" },
-                        { team1: "grup 8", team2: "grup 8", date: "25 Des", status: "Upcoming" },
-                        { team1: "grup 9", team2: "grup 7", date: "26 Des", status: "Upcoming" }
+                        { team1: "Grup 7", team2: "Grup 9", date: "25 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 8", team2: "Grup 8", date: "25 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 9", team2: "Grup 7", date: "26 Des", status: "Upcoming" } // Diperbaiki ke G besar
                     ],
                     klasemen: [
                         { team: "Grup 7", points: 1, wins: 1, losses: 0 },
@@ -255,9 +255,9 @@
                 {
                     name: "Grup D",
                     matches: [
-                        { team1: "grup 10", team2: "grup 12", date: "26 Des", status: "Upcoming" },
-                        { team1: "grup 11", team2: "grup 11", date: "27 Des", status: "Upcoming" },
-                        { team1: "grup 12", team2: "grup 10", date: "27 Des", status: "Upcoming" }
+                        { team1: "Grup 10", team2: "Grup 12", date: "26 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 11", team2: "Grup 11", date: "27 Des", status: "Upcoming" }, // Diperbaiki ke G besar
+                        { team1: "Grup 12", team2: "Grup 10", date: "27 Des", status: "Upcoming" } // Diperbaiki ke G besar
                     ],
                     klasemen: [
                         { team: "Grup 10", points: 1, wins: 1, losses: 1 },
@@ -293,7 +293,7 @@
                     // MENGATUR STATUS 'Completed' DAN 'winner' UNTUK MENGUJI TAMPILAN 'Super Match'
                     // Final diatur seolah-olah sudah selesai dengan Juara Musim Ini adalah Pemenang SF 1
                     matches: [
-                        { id: 7, team1: "?", team2: "?", score1: 0, score2: 0, winner: "?", date: "31 Des", status: "Completed", bo: 7 } 
+                        { id: 7, team1: "Pemenang SF 1", team2: "Pemenang SF 2", score1: 4, score2: 3, winner: "Pemenang SF 1", date: "31 Des", status: "Completed", bo: 7 } // Final diisi placeholder yang lengkap untuk mengaktifkan Super Match
                     ]
                 }
             ]
@@ -340,7 +340,7 @@
                                 <li>Start: 12 Tim dibagi menjadi 4 grup (A, B, C, D).</li>
                                 <li>Fase Grup: Semua tim bermain Round Robin (BO2).</li>
                                 <li>Lolos: 8 Tim (Juara dan Runner-up setiap grup) melangkah ke Playoffs.</li>
-                                <li>Playoffs: Dimulai dari Quarter Final (BO3), Semi Final (BO5), hingga Grand Final (BO7).</li>
+                                <li>Playoffs: Dimulai dari Quarter Final (BO5), Semi Final (BO5), hingga Grand Final (BO7).</li>
                                 <li>Finish: Pemenang Grand Final menjadi Juara Turnamen.</li>
                             </ul>
                         </div>
@@ -365,19 +365,22 @@
         function renderTeams() {
             const container = document.getElementById('bracket-container');
             
-            // Menggabungkan semua tim ke dalam satu daftar
+            // Membuat peta (Map) untuk mempermudah pencarian Grup berdasarkan Nama Tim
+            const teamGroupMap = new Map();
+            tournamentData.groups.forEach(group => {
+                group.klasemen.forEach(teamData => {
+                    // Pastikan tim dipetakan dengan nama yang konsisten (seperti di array teams)
+                    teamGroupMap.set(teamData.team, group.name);
+                });
+            });
+
+            // Mapping semua tim ke dalam HTML
             let teamsHtml = tournamentData.teams.map(teamName => {
                 // Mendapatkan inisial tim untuk logo placeholder
                 const initials = teamName.split(' ').map(n => n[0]).join('');
 
-                // Menentukan grup tim
-                let groupName = 'N/A';
-                for (const group of tournamentData.groups) {
-                    if (group.klasemen.some(t => t.team === teamName)) {
-                        groupName = group.name;
-                        break;
-                    }
-                }
+                // Mendapatkan nama grup menggunakan Map yang sudah dibuat
+                const groupName = teamGroupMap.get(teamName) || 'N/A'; // Default ke 'N/A' jika tidak ditemukan
                 
                 return `
                     <div class="flex items-center bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-700 hover:border-red-500 transition duration-200 bg-opacity-90">
@@ -386,14 +389,14 @@
                         
                         <div class="flex-grow">
                             <p class="text-xl font-bold text-white">${teamName}</p>
-                            <p class="text-sm text-gray-400">Grup: <span class="font-semibold text-red-300">${groupName}</span></p>
+                            <p class="text-sm text-gray-400">Grup: <span class="font-semibold ${groupName !== 'N/A' ? 'text-red-300' : 'text-gray-500'}">${groupName}</span></p>
                         </div>
                     </div>
                 `;
             }).join('');
 
             container.innerHTML = `
-                <div class="bg-gray-800 p-6 rounded-xl shadow-2xl border-t-4 border-red-600 bg-opacity-90">
+                <div class="bg-gray-800 p-6 rounded-xl shadow-2xl border-t-4 border-red-600 max-w-4xl mx-auto bg-opacity-90">
                     <h2 class="text-3xl font-bold text-red-400 mb-6 border-b pb-3 border-gray-700">Daftar Tim Peserta (${tournamentData.teams.length} Tim)</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         ${teamsHtml}
@@ -416,6 +419,8 @@
         // FUNGSI BARU: Cek apakah Fase Grup benar-benar sudah selesai (minimal ada data yang masuk)
         function isGroupPhaseComplete() {
             // Jika ada SATU SAJA grup yang klasemennya masih kosong, maka Fase Grup belum selesai
+            // Karena sekarang ada data, saya ubah logikanya menjadi: apakah semua grup memiliki pemenang?
+            // Untuk simulasi, kita cek apakah ada data yang masuk (tidak semua 0)
             return tournamentData.groups.every(group => !isKlasemenEmpty(group.klasemen));
         }
 
@@ -698,12 +703,13 @@
             let currentSeasonWinner = finalMatch.winner;
             
             // Jika final belum selesai, gunakan placeholder TBD
-            if (finalMatch.status !== 'Completed' || !currentSeasonWinner) {
+            if (finalMatch.status !== 'Completed' || !currentSeasonWinner || currentSeasonWinner === "?") {
                 currentSeasonWinner = "TBD";
             }
 
             // Perbarui detail pertandingan spesial
             specialMatchData.team1 = currentSeasonWinner;
+            specialMatchData.team2 = tournamentData.lastSeasonChampion; // Pastikan menggunakan Juara Musim Lalu yang baru
 
             // Tentukan kelas CSS untuk Juara Musim Ini
             const currentWinnerClass = currentSeasonWinner === "TBD" 
